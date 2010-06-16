@@ -1,0 +1,1 @@
+mplayer qp32/recon_0.yuv -demuxer rawvideo -rawvideo w=640:h=480

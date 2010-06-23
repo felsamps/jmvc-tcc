@@ -264,8 +264,9 @@ MotionEstimation::estimateBlockWithStart(const MbDataAccess& rcMbDataAccess,
 
 #ifdef ME_DBG
 	MbTypeToString mbType;
-	fprintf(MemTracingFile::otherFile,"EstimateBlock::  %s MB(%d,%d) Blk(%u) Refs. View-Frame(%d,%d) \n",
-			mbType.getMbType(uiMode).c_str(),mbX,mbY,uiBlk,rcRefFrame.getViewId(),rcRefFrame.getPOC());
+	char b_type = ( pcBSP ) ? '*' : ' ';
+	fprintf(MemTracingFile::otherFile,"%cEstimateBlock::  %s MB(%d,%d) Blk(%u) Refs. View-Frame(%d,%d) \n",
+			b_type,mbType.getMbType(uiMode).c_str(),mbX,mbY,uiBlk,rcRefFrame.getViewId(),rcRefFrame.getPOC());
 #endif
 
 #ifdef TRACING_MODE
@@ -274,6 +275,12 @@ MotionEstimation::estimateBlockWithStart(const MbDataAccess& rcMbDataAccess,
 	MemTracingFile::setCurrMb(mbX,mbY);
 	MemTracingFile::setBlkSize(uiMode);
 	MemTracingFile::setTargetBlk(uiBlk);
+	if( pcBSP ) {
+		MemTracingFile::setBiPrediction('B');
+	}
+	else {
+		MemTracingFile::setBiPrediction('P');
+	}
 #endif
 
 	//END_TRACING

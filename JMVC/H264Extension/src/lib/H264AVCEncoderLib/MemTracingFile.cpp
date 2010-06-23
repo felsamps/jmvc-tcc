@@ -29,6 +29,7 @@ unsigned int MemTracingFile::blkSize;
 unsigned int MemTracingFile::targetBlk;
 FILE* MemTracingFile::traceFile;
 FILE* MemTracingFile::otherFile;
+unsigned char MemTracingFile::biPrediction;
 
 void MemTracingFile::setTraceFile(FILE* newFile) {
 	traceFile = newFile;
@@ -96,6 +97,10 @@ void MemTracingFile::setRefRectangle(int x, int y) {
 	}
 }
 
+void MemTracingFile::setBiPrediction(char c) {
+	biPrediction = c;
+}
+
 std::string MemTracingFile::toString() {
 	char traceObj[50];
 	sprintf(traceObj,"%d %d\n%d %d\n%u %u\n%d %d\n%u %u\n%u\n\n",
@@ -126,6 +131,7 @@ void MemTracingFile::saveInTraceFileBin() {
 	fwrite(&currFrame, sizeof(int), 1, traceFile);
 	fwrite(&currView, sizeof(int), 1, traceFile);
 	fwrite(&blkSize, sizeof(int), 1, traceFile);
+	fwrite(&biPrediction, sizeof(char), 1, traceFile);
 }
 
 unsigned int MemTracingFile::getRefFrame() {

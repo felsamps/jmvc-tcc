@@ -18,7 +18,8 @@
 
 #ifdef TRACING_MODE
 //    #define T_FS
-    #define T_TZ
+//    #define T_TZ
+    #define T_SPIRAL
 #endif
 
 //Defines that control the debug prints
@@ -26,9 +27,10 @@
     #define SLICE_ENCODER_DBG
 //    #define MB_ENCODER_DBG
     #define ME_DBG
-    #define TZ_SEARCH_DBG
+//    #define TZ_SEARCH_DBG
 //    #define FULL_SEARCH_DBG
-    //#define PEL_LOG_SEARCH_DBG
+//    #define PEL_LOG_SEARCH_DBG
+    #define SPIRAL_SEARCH_DBG
 #endif
 
 

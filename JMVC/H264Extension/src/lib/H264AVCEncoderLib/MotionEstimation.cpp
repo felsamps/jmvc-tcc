@@ -482,7 +482,8 @@ Bool MotionEstimation::OmitPDISearch(Int x, Int y, Bool bQPel) // x, y: motion v
 }
 //~JVT-W080 BUG_FIX
 
-Void MotionEstimation::xPelSpiralSearch(IntYuvPicBuffer *pcPelData, Mv& rcMv, UInt& ruiSAD, UInt uiSearchRange) {
+Void MotionEstimation::xPelSpiralSearch(IntYuvPicBuffer *pcPelData, Mv& rcMv, UInt& ruiSAD,
+        UInt uiSearchRange) {
 	if (!uiSearchRange) {
 		uiSearchRange = m_cParams.getSearchRange();
 	}
@@ -512,7 +513,15 @@ Void MotionEstimation::xPelSpiralSearch(IntYuvPicBuffer *pcPelData, Mv& rcMv, UI
 		m_cXDSS.pVSearch = pucVRef + (y >> 1) * m_cXDSS.iCStride + (x >> 1);
 
 		uiSad = m_cXDSS.Func(&m_cXDSS);
-		uiSad += xGetCost(x, y);
+
+#ifdef T_SPIRAL
+        	MemTracingFile::setRefRectangle(x, y);
+                MemTracingFile::saveInTraceFileBin();
+#endif
+#ifdef SPIRAL_SEARCH_DBG
+            	fprintf(MemTracingFile::otherFile,"%s", MemTracingFile::getAreaRef().c_str());
+#endif
+                uiSad += xGetCost(x, y);
 
 		if (ruiSAD > uiSad) {
 			ruiSAD = uiSad;
@@ -525,8 +534,16 @@ Void MotionEstimation::xPelSpiralSearch(IntYuvPicBuffer *pcPelData, Mv& rcMv, UI
 	Int y = rcMv.getVer();
 	Int x = rcMv.getHor();
 
-	ruiSAD -= xGetCost(x, y);
+#ifdef T_SPIRAL
+        MemTracingFile::setRefRectangle(x, y);
+        MemTracingFile::saveInTraceFileBin();
+#endif
+#ifdef SPIRAL_SEARCH_DBG
+        fprintf(MemTracingFile::otherFile,"%s", MemTracingFile::getAreaRef().c_str());
+#endif
 
+	ruiSAD -= xGetCost(x, y);
+        
 	DO_DBG(m_cXDSS.pYSearch = pucYRef + y * m_cXDSS.iYStride + x);
 	DO_DBG(m_cXDSS.pUSearch = pucURef + (y >> 1) * m_cXDSS.iCStride + (x >> 1));
 	DO_DBG(m_cXDSS.pVSearch = pucVRef + (y >> 1) * m_cXDSS.iCStride + (x >> 1));
@@ -777,7 +794,7 @@ const Bool bTestZeroVectorStop      = 0;                                        
 const Bool bFirstSearchDiamond      = 1;  /* 1 = xTZ8PointDiamondSearch   0 = xTZ8PointSquareSearch */        \
 const Bool bFirstSearchStop         = 0;                                                                      \
 const UInt uiFirstSearchRounds      = 3;  /* first search stop X rounds after best match (must be >=1) */     \
-const Bool bEnableRasterSearch      = 1;                                                                      \
+const Bool bEnableRasterSearch      = 0;                                                                      \
 const Bool bAlwaysRasterSearch      = 0;  /* ===== 1: BETTER but factor 2 slower ===== */                     \
 const Bool bRasterRefinementEnable  = 0;  /* enable either raster refinement or star refinement */            \
 const Bool bRasterRefinementDiamond = 0;  /* 1 = xTZ8PointDiamondSearch   0 = xTZ8PointSquareSearch */        \

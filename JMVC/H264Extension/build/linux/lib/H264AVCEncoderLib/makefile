@@ -47,6 +47,7 @@ OBJS          	= \
 			$(OBJ_DIR)/MbCoder.o \
 			$(OBJ_DIR)/MbEncoder.o \
 			$(OBJ_DIR)/MbTempData.o \
+			$(OBJ_DIR)/MemAccessHandler.o \
 			$(OBJ_DIR)/MemTracingFile.o \
 			$(OBJ_DIR)/MotionEstimation.o \
 			$(OBJ_DIR)/MotionEstimationCost.o \

@@ -12,6 +12,7 @@
 
 #include "H264AVCCommonLib/Transform.h"
 #include "MemTracingFile.h"
+#include "MemAccessHandler.h"
 
 
 H264AVC_NAMESPACE_BEGIN
@@ -275,12 +276,17 @@ MotionEstimation::estimateBlockWithStart(const MbDataAccess& rcMbDataAccess,
 	MemTracingFile::setCurrMb(mbX,mbY);
 	MemTracingFile::setBlkSize(uiMode);
 	MemTracingFile::setTargetBlk(uiBlk);
+        MemTracingFile::setRefinement('N');
 	if( pcBSP ) {
 		MemTracingFile::setBiPrediction('B');
 	}
 	else {
 		MemTracingFile::setBiPrediction('P');
 	}
+#endif
+
+#ifdef TRACE_SW_USAGE
+        MemAccessHandler::setMb(mbX, mbY);
 #endif
 
 	//END_TRACING
@@ -290,7 +296,7 @@ MotionEstimation::estimateBlockWithStart(const MbDataAccess& rcMbDataAccess,
 		if (uiSearchRange) {
 			xPelBlockSearch(pcRefPelData[0], cMv, uiMinSAD, uiSearchRange);
 		} else {
-			//COMMENT: adjustment!!
+			//COMMENT: adjustment!! :-)
 			int temp = (m_cParams.getSearchMode() > 4) ? 4 : m_cParams.getSearchMode();
 			switch (temp) {
 				case 0:
@@ -342,6 +348,7 @@ MotionEstimation::estimateBlockWithStart(const MbDataAccess& rcMbDataAccess,
 			return Err::m_nOK;
 		}
 	}
+
 	// heiko.schwarz@hhi.fhg.de (fix for uninitialized memory with YUV_SAD and bi-directional search) >>>>
 	if (bOriginalSearchModeIsYUVSAD) {
 		m_cParams.setFullPelDFunc(DF_YUV_SAD);
@@ -899,6 +906,11 @@ Void MotionEstimation::xTZSearchHelp(IntTZSearchStrukt& rcStrukt, const Int iSea
 	fprintf(MemTracingFile::otherFile,"%s", MemTracingFile::getAreaRef().c_str());
 #endif
 
+
+#ifdef TRACE_SW_USAGE
+        MemAccessHandler::insertBlock(iSearchX, iSearchY, 16);
+#endif
+
 	if (rcStrukt.uiBestSad > uiSad) {
 		rcStrukt.uiBestSad = uiSad;
 		rcStrukt.iBestX = iSearchX;
@@ -1266,6 +1278,10 @@ Void MotionEstimation::xTZSearch(IntYuvPicBuffer *pcPelData, Mv& rcMv, UInt& rui
 	fprintf(MemTracingFile::otherFile,"%s", MemTracingFile::getAreaRef().c_str());
 #endif
 
+#ifdef TRACE_SW_USAGE
+        MemAccessHandler::init();
+#endif
+
 
 
 	// set rcMv as start point and as best point
@@ -1290,6 +1306,8 @@ Void MotionEstimation::xTZSearch(IntYuvPicBuffer *pcPelData, Mv& rcMv, UInt& rui
 	Int iDist = 0; //   1 2 3
 	Int iStartX = cStrukt.iBestX; //   4 0 5
 	Int iStartY = cStrukt.iBestY; //   6 7 8
+
+        MemTracingFile::printMbStartPoint(iStartX,iStartY);
 
 	// fist search
 	for (iDist = 1; iDist <= (Int) uiSearchRange; iDist *= 2) {
@@ -1325,7 +1343,7 @@ Void MotionEstimation::xTZSearch(IntYuvPicBuffer *pcPelData, Mv& rcMv, UInt& rui
 		xTZ2PointSearch(cStrukt, cSearchRect);
 	}
 
-	// raster search if distance is to big
+	// raster search if distance is too big
 	if (bEnableRasterSearch && ((cStrukt.uiBestDistance > iRaster) || bAlwaysRasterSearch)) {
 		cStrukt.uiBestDistance = iRaster;
 		for (iStartY = -cSearchRect.iNegVerLimit; iStartY <= cSearchRect.iPosVerLimit; iStartY += iRaster) {
@@ -1335,6 +1353,7 @@ Void MotionEstimation::xTZSearch(IntYuvPicBuffer *pcPelData, Mv& rcMv, UInt& rui
 		}
 	}
 
+        MemTracingFile::setRefinement('R');
 	// raster refinement
 	if (bRasterRefinementEnable && cStrukt.uiBestDistance > 0) {
 		while (cStrukt.uiBestDistance > 0) {
@@ -1385,6 +1404,7 @@ Void MotionEstimation::xTZSearch(IntYuvPicBuffer *pcPelData, Mv& rcMv, UInt& rui
 			}
 		}
 	}
+        MemTracingFile::setRefinement('N');
 
 	// write out best match
 	ruiSAD = cStrukt.uiBestSad - MotionEstimationCost::xGetCost(cStrukt.iBestX, cStrukt.iBestY);
@@ -1396,6 +1416,12 @@ Void MotionEstimation::xTZSearch(IntYuvPicBuffer *pcPelData, Mv& rcMv, UInt& rui
 #ifdef TZ_SEARCH_DBG
 	fprintf(MemTracingFile::otherFile,"%s", MemTracingFile::getAreaRef().c_str());
 #endif
+
+#ifdef TRACE_SW_USAGE
+        MemAccessHandler::insertBlock(cStrukt.iBestX, cStrukt.iBestY, 16);
+        MemAccessHandler::report();
+#endif
+        
 	rcMv.setHor(cStrukt.iBestX);
 	rcMv.setVer(cStrukt.iBestY);
 
@@ -1404,6 +1430,8 @@ Void MotionEstimation::xTZSearch(IntYuvPicBuffer *pcPelData, Mv& rcMv, UInt& rui
 	DO_DBG(m_cXDSS.pUSearch = cStrukt.pucURef + (cStrukt.iBestY >> 1) * cStrukt.iCStride + (cStrukt.iBestX >> 1));
 	DO_DBG(m_cXDSS.pVSearch = cStrukt.pucVRef + (cStrukt.iBestY >> 1) * cStrukt.iCStride + (cStrukt.iBestX >> 1));
 	AOF_DBG(ruiSAD == (m_cXDSS.Func(&m_cXDSS)));
+
+        
 }
 
 

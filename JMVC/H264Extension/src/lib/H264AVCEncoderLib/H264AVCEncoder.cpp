@@ -8,6 +8,7 @@
 #include "H264AVCCommonLib/FrameMng.h"
 #include "MemTracingFile.h"
 #include "H264AVCCommonLib/TraceFile.h"
+#include "MemAccessHandler.h"
 
 #include <math.h>
 #include <string>
@@ -57,6 +58,8 @@ ErrVal
 H264AVCEncoder::destroy() {
     MemTracingFile::closeTraceFile();
     MemTracingFile::closeOtherFile();
+    MemTracingFile::closeStartPointsFile();
+    fclose(MemAccessHandler::fp);
     delete this;
     return Err::m_nOK;
 }
@@ -98,6 +101,14 @@ H264AVCEncoder::init(
     otherFileName = folder + otherFileName + viewStr + extension;
 
     MemTracingFile::initOtherFile(otherFileName);
+
+    string startPointsFileName("starts_");
+    startPointsFileName = folder + startPointsFileName + viewStr + extension;
+    MemTracingFile::initStartPointsFile(startPointsFileName);
+
+    string swAccessFile("sw_trace_");
+    swAccessFile = folder + swAccessFile + viewStr + extension;
+    MemAccessHandler::fp = fopen(swAccessFile.c_str(), "w");
     
     printf("Tracing file %s created succesfully\n",fileName.c_str());
    // MemTracingFile::printOtherFile("Tracing file %s created succesfully\n",fileName.c_str());

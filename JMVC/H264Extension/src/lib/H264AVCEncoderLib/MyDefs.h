@@ -11,10 +11,9 @@
 #include <string>
 #include <map>
 
-
-//
-#define DBG_MODE
-#define TRACING_MODE
+//#define DBG_MODE
+//#define TRACING_MODE
+#define TRACE_SW_USAGE
 
 #ifdef TRACING_MODE
 //    #define T_FS
@@ -31,7 +30,7 @@
 //    #define TZ_SEARCH_DBG
 //    #define FULL_SEARCH_DBG
 //    #define SPIRAL_SEARCH_DBG
-    #define LOG_SEARCH_DBG
+//    #define LOG_SEARCH_DBG
 #endif
 
 
@@ -59,8 +58,6 @@ public:
         return this->mbType[mbType];
     }
 };
-
-
 
 #endif	/* _MYDEFS_H */
 

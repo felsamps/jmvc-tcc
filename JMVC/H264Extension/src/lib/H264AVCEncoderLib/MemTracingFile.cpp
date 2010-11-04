@@ -1,10 +1,3 @@
-/* 
- * File:   MemTracingFile.cpp
- * Author: felsamps
- * 
- * Created on 16 de Maio de 2010, 01:19
- */
-
 #include <stdlib.h>
 
 #include "MemTracingFile.h"
@@ -29,7 +22,10 @@ unsigned int MemTracingFile::blkSize;
 unsigned int MemTracingFile::targetBlk;
 FILE* MemTracingFile::traceFile;
 FILE* MemTracingFile::otherFile;
+FILE* MemTracingFile::startPointsFile;
 unsigned char MemTracingFile::biPrediction;
+unsigned char MemTracingFile::refinement;
+
 
 void MemTracingFile::setTraceFile(FILE* newFile) {
 	traceFile = newFile;
@@ -45,6 +41,14 @@ void MemTracingFile::closeTraceFile() {
 
 void MemTracingFile::initOtherFile(std::string nome) {
 	otherFile = fopen(nome.c_str(),"w");
+}
+
+void MemTracingFile::initStartPointsFile(std::string nome) {
+    startPointsFile = fopen(nome.c_str(),"w");
+}
+
+void MemTracingFile::closeStartPointsFile() {
+    fclose(startPointsFile);
 }
 
 void MemTracingFile::closeOtherFile() {
@@ -132,6 +136,7 @@ void MemTracingFile::saveInTraceFileBin() {
 	fwrite(&currView, sizeof(int), 1, traceFile);
 	fwrite(&blkSize, sizeof(int), 1, traceFile);
 	fwrite(&biPrediction, sizeof(char), 1, traceFile);
+        fwrite(&refinement, sizeof(char), 1, traceFile);
 }
 
 unsigned int MemTracingFile::getRefFrame() {
@@ -144,11 +149,17 @@ unsigned int MemTracingFile::getRefView() {
 
 std::string MemTracingFile::getAreaRef() {
 	char str[50];
-	sprintf(str,"(%d,%d)(%d,%d)\n", refMinX, refMinY, refMaxX, refMaxY);
+	sprintf(str,"(%d,%d)(%d,%d) %c\n", refMinX, refMinY, refMaxX, refMaxY, refinement);
 	std::string returnable(str);
 	return returnable;
 }
 
+void MemTracingFile::setRefinement(char c) {
+    refinement = c;
+}
 
+void MemTracingFile::printMbStartPoint(int x, int y) {
+    fprintf(startPointsFile,"Mb(%d,%d) (%d,%d) -- %d,%d\n",currMbX, currMbY, refView, refFrame, x, y);
 
+}
 

@@ -23,10 +23,12 @@ class MemTracingFile {
 		static unsigned int blkSize;
 		static unsigned int targetBlk;
 		static unsigned char biPrediction;
+                static unsigned char refinement;
 
 	public:
 		static FILE* otherFile;
 		static FILE* traceFile;
+                static FILE* startPointsFile;
 
 		MemTracingFile();
 		virtual ~MemTracingFile();
@@ -54,14 +56,16 @@ class MemTracingFile {
 		static void setTargetBlk(unsigned int targetBlk);
 		static void setRefRectangle(int x, int y);
 		static void setBiPrediction(char c);
+                static void setRefinement(char c);  //'N' - not refinement 'R' - refinement
 
 		static std::string toString();
 		static void saveInTraceFile();
 		static void saveInTraceFileBin();
 
-
+                static void initStartPointsFile(std::string nome);
+                static void printMbStartPoint(int x, int y);
+                static void closeStartPointsFile();
 };
-
 
 
 #endif	/* _MEMTRACINGFILE_H */

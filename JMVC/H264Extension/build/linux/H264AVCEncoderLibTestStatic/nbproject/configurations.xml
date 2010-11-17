@@ -75,6 +75,8 @@
       <in>MbSymbolWriteIf.h</in>
       <in>MbTempData.cpp</in>
       <in>MbTempData.h</in>
+      <in>MemAccessHandler.cpp</in>
+      <in>MemAccessHandler.h</in>
       <in>MemTracingFile.cpp</in>
       <in>MemTracingFile.h</in>
       <in>MotionEstimation.cpp</in>

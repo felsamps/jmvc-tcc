@@ -111,7 +111,8 @@ H264AVCEncoder::init(
     MemAccessHandler::fp = fopen(swAccessFile.c_str(), "w");
     
     printf("Tracing file %s created succesfully\n",fileName.c_str());
-   // MemTracingFile::printOtherFile("Tracing file %s created succesfully\n",fileName.c_str());
+
+    MemAccessHandler::setCurrView(view);
 
     return Err::m_nOK;
 }

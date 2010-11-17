@@ -287,7 +287,10 @@ MotionEstimation::estimateBlockWithStart(const MbDataAccess& rcMbDataAccess,
 
 #ifdef TRACE_SW_USAGE
         MemAccessHandler::setMb(mbX, mbY);
+        MemAccessHandler::setBiPred(pcBSP);
+        MemAccessHandler::setRefView(rcRefFrame.getViewId());
 #endif
+
 
 	//END_TRACING
 
@@ -528,6 +531,7 @@ Void MotionEstimation::xPelSpiralSearch(IntYuvPicBuffer *pcPelData, Mv& rcMv, UI
 #ifdef SPIRAL_SEARCH_DBG
             	fprintf(MemTracingFile::otherFile,"%s", MemTracingFile::getAreaRef().c_str());
 #endif
+
                 uiSad += xGetCost(x, y);
 
 		if (ruiSAD > uiSad) {
@@ -562,6 +566,10 @@ Void MotionEstimation::xPelLogSearch(IntYuvPicBuffer *pcPelData, Mv& rcMv, UInt&
 		uiSearchRange = m_cParams.getSearchRange();
 	}
 
+#ifdef TRACE_SW_USAGE
+        MemAccessHandler::init();
+#endif
+
 	XPel* pucRef = pcPelData->getLumBlk();
 	XPel* pucSearch;
 	Int iStride = pcPelData->getLStride();
@@ -593,6 +601,9 @@ Void MotionEstimation::xPelLogSearch(IntYuvPicBuffer *pcPelData, Mv& rcMv, UInt&
 #ifdef LOG_SEARCH_DBG
         fprintf(MemTracingFile::otherFile,"%s", MemTracingFile::getAreaRef().c_str());
 #endif
+#ifdef TRACE_SW_USAGE
+        MemAccessHandler::insertBlock(rcMv.getHor(), rcMv.getVer(), 16);
+#endif
 
 	/**
 	 * Memory Tracing
@@ -614,6 +625,9 @@ Void MotionEstimation::xPelLogSearch(IntYuvPicBuffer *pcPelData, Mv& rcMv, UInt&
 #endif
 #ifdef LOG_SEARCH_DBG
         fprintf(MemTracingFile::otherFile,"%s", MemTracingFile::getAreaRef().c_str());
+#endif
+#ifdef TRACE_SW_USAGE
+        MemAccessHandler::insertBlock(rcMv.getHor(), rcMv.getVer(), 16);
 #endif
 				if (uiBestSad > uiSad) {
 					uiBestSad = uiSad;
@@ -656,6 +670,9 @@ Void MotionEstimation::xPelLogSearch(IntYuvPicBuffer *pcPelData, Mv& rcMv, UInt&
 #ifdef LOG_SEARCH_DBG
         fprintf(MemTracingFile::otherFile,"%s", MemTracingFile::getAreaRef().c_str());
 #endif
+#ifdef TRACE_SW_USAGE
+        MemAccessHandler::insertBlock(x - iStep, y, 16);
+#endif
 
 				if (uiBestSad > uiSad) {
 					uiBestSad = uiSad;
@@ -675,6 +692,9 @@ Void MotionEstimation::xPelLogSearch(IntYuvPicBuffer *pcPelData, Mv& rcMv, UInt&
 #ifdef LOG_SEARCH_DBG
         fprintf(MemTracingFile::otherFile,"%s", MemTracingFile::getAreaRef().c_str());
 #endif
+#ifdef TRACE_SW_USAGE
+        MemAccessHandler::insertBlock(x + iStep, y, 16);
+#endif
 				if (uiBestSad > uiSad) {
 					uiBestSad = uiSad;
 					dx = iStep;
@@ -692,6 +712,9 @@ Void MotionEstimation::xPelLogSearch(IntYuvPicBuffer *pcPelData, Mv& rcMv, UInt&
 #endif
 #ifdef LOG_SEARCH_DBG
         fprintf(MemTracingFile::otherFile,"%s", MemTracingFile::getAreaRef().c_str());
+#endif
+#ifdef TRACE_SW_USAGE
+        MemAccessHandler::insertBlock(x, y - iStep, 16);
 #endif
 				if (uiBestSad > uiSad) {
 					uiBestSad = uiSad;
@@ -712,6 +735,10 @@ Void MotionEstimation::xPelLogSearch(IntYuvPicBuffer *pcPelData, Mv& rcMv, UInt&
 #ifdef LOG_SEARCH_DBG
         fprintf(MemTracingFile::otherFile,"%s", MemTracingFile::getAreaRef().c_str());
 #endif
+#ifdef TRACE_SW_USAGE
+        MemAccessHandler::insertBlock(x, y + iStep, 16);
+#endif
+
 				if (uiBestSad > uiSad) {
 					uiBestSad = uiSad;
 					dx = 0;
@@ -752,6 +779,9 @@ Void MotionEstimation::xPelLogSearch(IntYuvPicBuffer *pcPelData, Mv& rcMv, UInt&
 #ifdef LOG_SEARCH_DBG
         fprintf(MemTracingFile::otherFile,"%s", MemTracingFile::getAreaRef().c_str());
 #endif
+#ifdef TRACE_SW_USAGE
+        MemAccessHandler::insertBlock(x - iStep, y - iStep, 16);
+#endif
 				if (uiBestSad > uiSad) {
 					uiBestSad = uiSad;
 					dx = -iStep;
@@ -770,6 +800,9 @@ Void MotionEstimation::xPelLogSearch(IntYuvPicBuffer *pcPelData, Mv& rcMv, UInt&
 #endif
 #ifdef LOG_SEARCH_DBG
         fprintf(MemTracingFile::otherFile,"%s", MemTracingFile::getAreaRef().c_str());
+#endif
+#ifdef TRACE_SW_USAGE
+        MemAccessHandler::insertBlock(x - iStep, y + iStep, 16);
 #endif
 				if (uiBestSad > uiSad) {
 					uiBestSad = uiSad;
@@ -792,6 +825,9 @@ Void MotionEstimation::xPelLogSearch(IntYuvPicBuffer *pcPelData, Mv& rcMv, UInt&
 #ifdef LOG_SEARCH_DBG
         fprintf(MemTracingFile::otherFile,"%s", MemTracingFile::getAreaRef().c_str());
 #endif
+#ifdef TRACE_SW_USAGE
+        MemAccessHandler::insertBlock(x + iStep, y - iStep, 16);
+#endif
 				if (uiBestSad > uiSad) {
 					uiBestSad = uiSad;
 					dx = iStep;
@@ -810,6 +846,9 @@ Void MotionEstimation::xPelLogSearch(IntYuvPicBuffer *pcPelData, Mv& rcMv, UInt&
 #endif
 #ifdef LOG_SEARCH_DBG
         fprintf(MemTracingFile::otherFile,"%s", MemTracingFile::getAreaRef().c_str());
+#endif
+#ifdef TRACE_SW_USAGE
+        MemAccessHandler::insertBlock(x + iStep, y + iStep, 16);
 #endif
 				if (uiBestSad > uiSad) {
 					uiBestSad = uiSad;
@@ -837,6 +876,10 @@ Void MotionEstimation::xPelLogSearch(IntYuvPicBuffer *pcPelData, Mv& rcMv, UInt&
 #endif
 #ifdef LOG_SEARCH_DBG
         fprintf(MemTracingFile::otherFile,"%s", MemTracingFile::getAreaRef().c_str());
+#endif
+#ifdef TRACE_SW_USAGE
+        MemAccessHandler::insertBlock(x, y, 16);
+        MemAccessHandler::report();
 #endif
 
 	DO_DBG(m_cXDSS.pYSearch = pucRef + y * iStride + x);
@@ -1306,8 +1349,9 @@ Void MotionEstimation::xTZSearch(IntYuvPicBuffer *pcPelData, Mv& rcMv, UInt& rui
 	Int iDist = 0; //   1 2 3
 	Int iStartX = cStrukt.iBestX; //   4 0 5
 	Int iStartY = cStrukt.iBestY; //   6 7 8
-
+#ifdef T_START_POINTS
         MemTracingFile::printMbStartPoint(iStartX,iStartY);
+#endif
 
 	// fist search
 	for (iDist = 1; iDist <= (Int) uiSearchRange; iDist *= 2) {

@@ -19,7 +19,8 @@
 //    #define T_FS
 //    #define T_TZ
 //    #define T_SPIRAL
-    #define T_LOG
+//    #define T_LOG
+//    #define T_START_POINTS
 #endif
 
 //Defines that control the debug prints

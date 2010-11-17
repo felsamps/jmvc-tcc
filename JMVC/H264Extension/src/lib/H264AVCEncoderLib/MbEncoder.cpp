@@ -434,6 +434,14 @@ MbEncoder::encodeMacroblock(MbDataAccess& rcMbDataAccess,
 	m_pcXDistortion->loadOrgMbPelData(pcOrgFrame->getFullPelYuvBuffer(), m_pcIntOrgMbPelData); //lufeng: bug fixed for org pic lost in mbaff coding
 	m_pcTransform->setQp(rcMbDataAccess, rcMbDataAccess.getSH().getKeyPictureFlag());
 
+        //inserted Felipe
+        XPel *ipPel    = m_pcIntOrgMbPelData->getMbLumAddr();	//zatt
+        Int   ipStride = m_pcIntOrgMbPelData->getLStride();		//zatt
+        calcLuminance(ipPel, ipStride);
+        calcVariance(ipPel, ipStride, m_AVG_Luma);
+
+        MemTracingFile::insertVar(m_VAR_Luma);
+
 
 	//====== evaluate macroblock modes ======
 	if (rcMbDataAccess.getSH().isInterP() && bSkipModeAllowed) {
@@ -6998,6 +7006,55 @@ ErrVal MbEncoder::xCheckSkipSearch(const RefFrameList& rcRefFrameList, Int iRefI
 		}
 	}
 	return Err::m_nOK;
+}
+
+void MbEncoder::calcVariance(XPel *posPel, Int iStride, Int mean)
+{
+	int c;
+	double variance = 0;
+	double varianceApprox = 0;
+
+	for (int j = 0; j < 16; j++)
+	{
+		for (int i = 0; i < 16; i++)
+		{
+			c = posPel[i];
+			variance += (c - mean)*(c - mean);
+			varianceApprox += (int)abs(c-mean);
+		}
+		posPel += iStride;
+	}
+
+	m_VAR_Luma = (int)variance >> 8;
+
+
+}
+
+void MbEncoder::calcLuminance(XPel *posPel, Int iStride)
+{
+	int c;
+	int min = 255;
+	int max = 0;
+	int sum = 0;
+
+	for (int j = 0; j < 16; j++)
+	{
+		for (int i = 0; i < 16; i++)
+		{
+			c = posPel[i];
+			//printf("%d ",posPel[i]);
+			if (c < min) min = c;
+			if (c > max) max = c;
+			sum += c;
+		}
+		posPel += iStride;
+		//printf("\n");
+	}
+
+	m_MAX_Luma = max;
+	m_MIN_Luma = min;
+	m_CTR_Luma = (max - min) >> 8;
+	m_AVG_Luma = (sum >> 8);
 }
 
 //~JVT-W080 BUG_FIX

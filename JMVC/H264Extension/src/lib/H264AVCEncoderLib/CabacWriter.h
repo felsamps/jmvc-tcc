@@ -21,6 +21,8 @@ public MbSymbolWriteIf
 protected:
 	CabacWriter();
 	virtual ~CabacWriter();
+	static FILE *mb_type; //Zatt
+	static FILE *vetor; //Zatt
 
 public:
   static ErrVal create( CabacWriter*& rpcCabacWriter );

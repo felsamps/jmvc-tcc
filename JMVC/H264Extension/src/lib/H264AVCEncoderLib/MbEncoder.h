@@ -38,6 +38,15 @@ protected:
 	virtual ~MbEncoder();
 
 public:
+  //inserted Felipe
+  Int 					m_MAX_Luma;		//zatt
+  Int 					m_MIN_Luma;
+  Int 					m_CTR_Luma;
+  Int 					m_AVG_Luma;
+  Int 					m_VAR_Luma;
+  void calcVariance(XPel *posPel, Int iStride, Int mean);
+    void calcLuminance(XPel *posPel, Int iStride);
+
   static ErrVal create( MbEncoder*& rpcMbEncoder );
   ErrVal destroy();
 

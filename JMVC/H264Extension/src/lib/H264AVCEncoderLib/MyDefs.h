@@ -12,14 +12,14 @@
 #include <map>
 
 //#define DBG_MODE
-//#define TRACING_MODE
-#define TRACE_SW_USAGE
+#define TRACING_MODE
+//#define TRACE_SW_USAGE
 
 #ifdef TRACING_MODE
 //    #define T_FS
 //    #define T_TZ
 //    #define T_SPIRAL
-//    #define T_LOG
+    #define T_LOG
 //    #define T_START_POINTS
 #endif
 

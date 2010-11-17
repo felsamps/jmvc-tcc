@@ -101,6 +101,7 @@ H264AVCEncoder::init(
     otherFileName = folder + otherFileName + viewStr + extension;
 
     MemTracingFile::initOtherFile(otherFileName);
+    MemTracingFile::setCurrView(view);
 
     string startPointsFileName("starts_");
     startPointsFileName = folder + startPointsFileName + viewStr + extension;
@@ -111,6 +112,8 @@ H264AVCEncoder::init(
     MemAccessHandler::fp = fopen(swAccessFile.c_str(), "w");
     
     printf("Tracing file %s created succesfully\n",fileName.c_str());
+
+    MemTracingFile::initCacheFiles(view);
 
     MemAccessHandler::setCurrView(view);
 

@@ -14,6 +14,11 @@ const int MAX_COEFF[9] = { 8,16,16,16,15, 4, 4,15,15};
 const int COUNT_THR[9] = { 3, 4, 4, 4, 3, 2, 2, 3, 3};
 
 
+FILE *CabacWriter::mb_type;
+FILE *CabacWriter::vetor;
+
+
+
 CabacWriter::CabacWriter():
 #ifdef   LF_INTERLACE
 m_cFieldFlagCCModel   ( 1,                3),
@@ -48,6 +53,11 @@ m_cFldLastCCModel     ( NUM_BLOCK_TYPES,  NUM_LAST_CTX),
   m_uiLastDQpNonZero(0),
   m_bTraceEnable(true)
 {
+        mb_type = new FILE;		//Zatt
+	vetor = new FILE;		//Zatt
+
+        mb_type = ::fopen( "mb_type.txt", "wt" );	//Zatt
+        vetor = ::fopen( "vetor.txt", "wt" );	//Zatt
 }
 
 CabacWriter::~CabacWriter()
@@ -418,6 +428,9 @@ ErrVal CabacWriter::skipFlag( MbDataAccess& rcMbDataAccess, Bool bNotAllowed )
   ETRACE_TY( "ae(v)" );
   ETRACE_CODE( 0 );
   ETRACE_N;
+  
+  fprintf(mb_type, "99\n"); //Zatt
+
 
   return Err::m_nOK;
 }
@@ -491,6 +504,26 @@ ErrVal CabacWriter::mbMode( MbDataAccess& rcMbDataAccess )
 {
   UInt uiMbMode     = rcMbDataAccess.getConvertMbType();
   ETRACE_DECLARE( UInt uiOrigMbMode = uiMbMode );
+
+
+  // this code remap all MBTypes to the B slice context
+  if (m_pcSliceHeader->isIntra())	//slice I
+	  fprintf(mb_type, "%d\n", (int)uiMbMode+23); //Zatt
+  else if (m_pcSliceHeader->isInterP())	//slice P
+	  if ((int)uiMbMode == 0)
+		fprintf(mb_type, "%d\n", 1); //Zatt	
+	  else if ((int)uiMbMode == 1)
+		fprintf(mb_type, "%d\n", 4); //Zatt	
+      else if ((int)uiMbMode == 2)
+		fprintf(mb_type, "%d\n", 5); //Zatt	
+	  else if ((int)uiMbMode == 3 || (int)uiMbMode == 4)
+		fprintf(mb_type, "%d\n", 22); //Zatt
+	  else
+	    fprintf(mb_type, "%d\n", (int)uiMbMode-5+23); //Zatt
+  else	//slice B
+	fprintf(mb_type, "%d\n", (int)uiMbMode); //Zatt
+
+
 
   if( m_pcSliceHeader->isIntra() )
   {
@@ -779,6 +812,8 @@ ErrVal CabacWriter::xWriteMvd( MbDataAccess& rcMbDataAccess, Mv cMv, LumaIdx cId
   ETRACE_T( " left " );
   ETRACE_V( cMvB.getVer() );
   ETRACE_N;
+
+  fprintf(vetor, "%d %d\n", (int)sHor, (int)sVer); //Zatt
 
   return Err::m_nOK;
 }

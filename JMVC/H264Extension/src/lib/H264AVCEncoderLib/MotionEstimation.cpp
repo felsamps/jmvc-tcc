@@ -283,6 +283,7 @@ MotionEstimation::estimateBlockWithStart(const MbDataAccess& rcMbDataAccess,
 	else {
 		MemTracingFile::setBiPrediction('P');
 	}
+        MemTracingFile::checkStatus();
 #endif
 
 #ifdef TRACE_SW_USAGE

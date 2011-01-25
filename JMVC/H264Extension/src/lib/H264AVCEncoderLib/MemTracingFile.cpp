@@ -26,28 +26,18 @@ FILE* MemTracingFile::otherFile;
 FILE* MemTracingFile::startPointsFile;
 unsigned char MemTracingFile::biPrediction;
 unsigned char MemTracingFile::refinement;
-FILE* MemTracingFile::west;
-FILE* MemTracingFile::east;
-FILE* MemTracingFile::north;
-FILE* MemTracingFile::south;
-FILE* MemTracingFile::sad_west;
-FILE* MemTracingFile::sad_east;
-FILE* MemTracingFile::sad_north;
-FILE* MemTracingFile::sad_south;
-FILE* MemTracingFile::sm_west;
-FILE* MemTracingFile::sm_east;
-FILE* MemTracingFile::sm_north;
-FILE* MemTracingFile::sm_south;
-FILE* MemTracingFile::var_west;
-FILE* MemTracingFile::var_east;
-FILE* MemTracingFile::var_north;
-FILE* MemTracingFile::var_south;
-FILE* MemTracingFile::sadFile;
+FILE* MemTracingFile::tracingFile;
 FILE* MemTracingFile::varFile;
+FILE* MemTracingFile::sadFile;
+FILE* MemTracingFile::smFile;
 int MemTracingFile::currVar;
 FILE* MemTracingFile::vetor;
 FILE* MemTracingFile::mb_type;
-
+bool MemTracingFile::west;
+bool MemTracingFile::east;
+bool MemTracingFile::north;
+bool MemTracingFile::south;
+bool MemTracingFile::enable;
 
 void MemTracingFile::setTraceFile(FILE* newFile) {
 	traceFile = newFile;
@@ -181,127 +171,90 @@ void MemTracingFile::setRefinement(char c) {
 }
 
 void MemTracingFile::printMbStartPoint(int x, int y) {
-    fprintf(startPointsFile,"Mb(%d,%d) (%d,%d) -- %d,%d\n",currMbX, currMbY, refView, refFrame, x, y);
+    fprintf(startPointsFile,"%d %d %c\n",x, y, (refView == currView) ? '0' : '1');
 
 }
 
 void MemTracingFile::initCacheFiles(int view) {
     if( view == 0 ) {
-        north = fopen("mem_tracing/cache/trace/north_0.dat","w");
-        east = fopen("mem_tracing/cache/trace/east_0.dat","w");
-        west = fopen("mem_tracing/cache/trace/west_0.dat","w");
-        south = fopen("mem_tracing/cache/trace/south_0.dat","w");
-        sm_north = fopen("mem_tracing/cache/search_map/north_0.dat","w");
-        sm_east = fopen("mem_tracing/cache/search_map/east_0.dat","w");
-        sm_west = fopen("mem_tracing/cache/search_map/west_0.dat","w");
-        sm_south = fopen("mem_tracing/cache/search_map/south_0.dat","w");
-        sad_north = fopen("mem_tracing/cache/sad/north_0.dat","w");
-        sad_east = fopen("mem_tracing/cache/sad/east_0.dat","w");
-        sad_west = fopen("mem_tracing/cache/sad/west_0.dat","w");
-        sad_south = fopen("mem_tracing/cache/sad/south_0.dat","w");
-        var_north = fopen("mem_tracing/cache/var/north_0.dat","w");
-        var_east = fopen("mem_tracing/cache/var/east_0.dat","w");
-        var_west = fopen("mem_tracing/cache/var/west_0.dat","w");
-        var_south = fopen("mem_tracing/cache/var/south_0.dat","w");
-       
+        tracingFile = fopen("mem_tracing/cache/trace/trace_0.dat","w");
+        smFile = fopen("mem_tracing/cache/search_map/search_map_0.dat","w");
+        sadFile = fopen("mem_tracing/cache/sad/sad_0.dat","w");
+        varFile = fopen("mem_tracing/cache/var/var_0.dat","w");
     }
     if( view == 1 ) {
-        north = fopen("mem_tracing/cache/trace/north_1.dat","w");
-        east = fopen("mem_tracing/cache/trace/east_1.dat","w");
-        west = fopen("mem_tracing/cache/trace/west_1.dat","w");
-        south = fopen("mem_tracing/cache/trace/south_1.dat","w");
-        sm_north = fopen("mem_tracing/cache/search_map/north_1.dat","w");
-        sm_east = fopen("mem_tracing/cache/search_map/east_1.dat","w");
-        sm_west = fopen("mem_tracing/cache/search_map/west_1.dat","w");
-        sm_south = fopen("mem_tracing/cache/search_map/south_1.dat","w");
-        sad_north = fopen("mem_tracing/cache/sad/north_1.dat","w");
-        sad_east = fopen("mem_tracing/cache/sad/east_1.dat","w");
-        sad_west = fopen("mem_tracing/cache/sad/west_1.dat","w");
-        sad_south = fopen("mem_tracing/cache/sad/south_1.dat","w");
-        var_north = fopen("mem_tracing/cache/var/north_1.dat","w");
-        var_east = fopen("mem_tracing/cache/var/east_1.dat","w");
-        var_west = fopen("mem_tracing/cache/var/west_1.dat","w");
-        var_south = fopen("mem_tracing/cache/var/south_1.dat","w");
+        tracingFile = fopen("mem_tracing/cache/trace/trace_1.dat","w");
+        smFile = fopen("mem_tracing/cache/search_map/search_map_1.dat","w");
+        sadFile = fopen("mem_tracing/cache/sad/sad_1.dat","w");
+        varFile = fopen("mem_tracing/cache/var/var_1.dat","w");
     }
     if( view == 2 ) {
-        north = fopen("mem_tracing/cache/trace/north_2.dat","w");
-        east = fopen("mem_tracing/cache/trace/east_2.dat","w");
-        west = fopen("mem_tracing/cache/trace/west_2.dat","w");
-        south = fopen("mem_tracing/cache/trace/south_2.dat","w");
-        sm_north = fopen("mem_tracing/cache/search_map/north_2.dat","w");
-        sm_east = fopen("mem_tracing/cache/search_map/east_2.dat","w");
-        sm_west = fopen("mem_tracing/cache/search_map/west_2.dat","w");
-        sm_south = fopen("mem_tracing/cache/search_map/south_2.dat","w");
-        sad_north = fopen("mem_tracing/cache/sad/north_2.dat","w");
-        sad_east = fopen("mem_tracing/cache/sad/east_2.dat","w");
-        sad_west = fopen("mem_tracing/cache/sad/west_2.dat","w");
-        sad_south = fopen("mem_tracing/cache/sad/south_2.dat","w");
-        var_north = fopen("mem_tracing/cache/var/north_2.dat","w");
-        var_east = fopen("mem_tracing/cache/var/east_2.dat","w");
-        var_west = fopen("mem_tracing/cache/var/west_2.dat","w");
-        var_south = fopen("mem_tracing/cache/var/south_2.dat","w");
+        tracingFile = fopen("mem_tracing/cache/trace/trace_2.dat","w");
+        smFile = fopen("mem_tracing/cache/search_map/search_map_2.dat","w");
+        sadFile = fopen("mem_tracing/cache/sad/sad_2.dat","w");
+        varFile = fopen("mem_tracing/cache/var/var_2.dat","w");
     }
     
 }
 
 void MemTracingFile::insertCacheAccess(int x, int y) {
-    FILE *temp;
-    if( refView < currView ) { //NORTH
-        temp = north;
+    if( biPrediction == 'P' && enable ) {
+        fprintf(tracingFile, "%d %d\n",x, y);
     }
-    if( refView > currView ) { //SOUTH
-        temp = south;
-    }
-    if( refView == currView ) {
-        if( refFrame < currFrame ) { //WEST
-            temp = west;
-        }
-        else { //EAST
-            temp = east;
-        }
-    }
-    fprintf(temp, "%d %d\n",x, y);
 }
 
 void MemTracingFile::insertCacheCurrMB() {
-    insertCacheAccess(currMbX, currMbY);
-}
-
-void MemTracingFile::closeCacheFiles() {
-    fclose(north);
-    fclose(south);
-    fclose(east);
-    fclose(west);
-    fclose(sadFile);
-    fclose(varFile);
-    fclose(sm_north);
-    fclose(sm_south);
-    fclose(sm_east);
-    fclose(sm_west);
-}
-
-void MemTracingFile::insertSearchMapMB(int num) {
-    FILE *temp;
+    int direction;
     if( refView < currView ) { //NORTH
-        temp = sm_north;
+        direction = 0;
     }
     if( refView > currView ) { //SOUTH
-        temp = sm_south;
+        direction = 1;
     }
     if( refView == currView ) {
         if( refFrame < currFrame ) { //WEST
-            temp = sm_west;
+            direction = 2;
         }
         else { //EAST
-            temp = sm_east;
+            direction = 3;
         }
     }
-    
-    if( num == -1) { //FIM DO MB!
-        fprintf(temp, "666\n");
+    if( biPrediction == 'P'&& enable ) {
+
+        fprintf(tracingFile, "%d %d %d\n",currMbX, currMbY, direction);
     }
-    else {
-        fprintf(temp, "%d %d\n", currMbX, currMbY);
+}
+
+void MemTracingFile::closeCacheFiles() {
+    fclose(sadFile);
+    fclose(varFile);
+    fclose(smFile);
+    fclose(smFile);
+}
+
+void MemTracingFile::insertSearchMapMB(int num) {
+    int direction;
+    if( refView < currView ) { //NORTH
+        direction = 0;
+    }
+    if( refView > currView ) { //SOUTH
+        direction = 1;
+    }
+    if( refView == currView ) {
+        if( refFrame < currFrame ) { //WEST
+            direction = 2;
+        }
+        else { //EAST
+            direction = 3;
+        }
+    }
+    if( biPrediction == 'P'&& enable ) {
+        if( num == -1) { //FIM DO MB!
+            fprintf(smFile, "666\n");
+        }
+        else {
+            fprintf(smFile, "%d %d %d\n", currMbX, currMbY, direction);
+        }
     }
 }
 
@@ -322,44 +275,14 @@ void MemTracingFile::insertSearchMap(bool position[4]) {
         it = 5;
     }
 
-    FILE *temp;
-    if( refView < currView ) { //NORTH
-        temp = sm_north;
+    if( biPrediction == 'P' && enable) {
+        fprintf(smFile, "%d\n", it);
     }
-    if( refView > currView ) { //SOUTH
-        temp = sm_south;
-    }
-    if( refView == currView ) {
-        if( refFrame < currFrame ) { //WEST
-            temp = sm_west;
-        }
-        else { //EAST
-            temp = sm_east;
-        }
-    }
-
-    fprintf(temp, "%d\n", it);
     
 }
 
 void MemTracingFile::insertZeroSad(unsigned int sad) {
-    FILE *temp;
-    if( refView < currView ) { //NORTH
-        temp = sad_north;
-    }
-    if( refView > currView ) { //SOUTH
-        temp = sad_south;
-    }
-    if( refView == currView ) {
-        if( refFrame < currFrame ) { //WEST
-            temp = sad_west;
-        }
-        else { //EAST
-            temp = sad_east;
-        }
-    }
-
-    fprintf(temp, "%d\n", sad);
+    fprintf(sadFile, "%d\n", sad);
 }
 
 void MemTracingFile::insertVar(int var) {
@@ -368,21 +291,51 @@ void MemTracingFile::insertVar(int var) {
 }
 
 void MemTracingFile::printVar() {
-    FILE *temp;
-    if( refView < currView ) { //NORTH
-        temp = var_north;
+    fprintf(varFile,"%d\n", currVar);
+}
+
+void MemTracingFile::initStatus() {
+    south = false;
+    north = false;
+    west = false;
+    east = false;
+    enable = true;
+}
+
+void MemTracingFile::checkStatus() {
+    if( refView < currView) { //NORTH
+        if( !north ) {
+            north = true;
+        }
+        else {
+            enable = false;
+        }
     }
     if( refView > currView ) { //SOUTH
-        temp = var_south;
+        if( !south ) {
+            south = true;
+        }
+        else {
+            enable = false;
+        }
     }
     if( refView == currView ) {
         if( refFrame < currFrame ) { //WEST
-            temp = var_west;
+            if( !west ) {
+                west = true;
+            }
+            else {
+                enable = false;
+            }
         }
-        else { //EAST
-            temp = var_east;
+        if( refFrame > currFrame ) {
+            if( !east ) {
+                east = true;
+            }
+            else {
+                enable = false;
+            }
+            
         }
     }
-    fprintf(temp,"%d\n", currVar);
 }
-

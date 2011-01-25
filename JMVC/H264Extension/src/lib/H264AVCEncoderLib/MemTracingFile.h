@@ -31,26 +31,17 @@ class MemTracingFile {
 		static FILE* otherFile;
 		static FILE* traceFile;
                 static FILE* startPointsFile;
-                static FILE* west;
-                static FILE* east;
-                static FILE* north;
-                static FILE* south;
-                static FILE* sadFile;
+                static FILE* tracingFile;
                 static FILE* varFile;
-                static FILE* sm_west;
-                static FILE* sm_east;
-                static FILE* sm_north;
-                static FILE* sm_south;
-                static FILE* sad_west;
-                static FILE* sad_east;
-                static FILE* sad_north;
-                static FILE* sad_south;
-                static FILE* var_west;
-                static FILE* var_east;
-                static FILE* var_north;
-                static FILE* var_south;
+                static FILE* sadFile;
+                static FILE* smFile;
                 static FILE* vetor;
                 static FILE* mb_type;
+                static bool west;
+                static bool east;
+                static bool north;
+                static bool south;
+                static bool enable;
 
 
 		MemTracingFile();
@@ -102,6 +93,9 @@ class MemTracingFile {
 
                 static void writeVetor(int x, int y);
                 static void writeMbType(int type);
+
+                static void initStatus();
+                static void checkStatus();
 
 };
 

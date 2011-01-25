@@ -456,6 +456,8 @@ MbEncoder::encodeMacroblock(MbDataAccess& rcMbDataAccess,
 #ifdef MB_ENCODER_DBG
 	//DEBUG
 #endif
+        MemTracingFile::initStatus();
+        
 
 	if (rcMbDataAccess.getSH().isInterP() || rcMbDataAccess.getSH().isInterB()) {
 		RNOK(xEstimateMb16x16(m_pcIntMbTempData, m_pcIntMbBestData, rcList0, rcList1, false, uiNumMaxIter, uiIterSearchRange, false, NULL, false));

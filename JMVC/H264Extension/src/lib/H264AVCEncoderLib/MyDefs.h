@@ -12,22 +12,22 @@
 #include <map>
 
 //#define DBG_MODE
-#define TRACING_MODE
-//#define TRACE_SW_USAGE
+//#define TRACING_MODE
+#define TRACE_SW_USAGE
 
 #ifdef TRACING_MODE
-//    #define T_FS
-//    #define T_TZ
-//    #define T_SPIRAL
-    #define T_LOG
-//    #define T_START_POINTS
+//  #define T_FS
+//  #define T_TZ
+//  #define T_SPIRAL
+//  #define T_LOG
+//  #define T_START_POINTS
 #endif
 
 //Defines that control the debug prints
 #ifdef DBG_MODE
     #define SLICE_ENCODER_DBG
 //    #define MB_ENCODER_DBG
-    #define ME_DBG
+//    #define ME_DBG
 //    #define TZ_SEARCH_DBG
 //    #define FULL_SEARCH_DBG
 //    #define SPIRAL_SEARCH_DBG

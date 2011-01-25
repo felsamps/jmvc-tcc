@@ -60,6 +60,7 @@ H264AVCEncoder::destroy() {
     MemTracingFile::closeOtherFile();
     MemTracingFile::closeStartPointsFile();
     fclose(MemAccessHandler::fp);
+    MemAccessHandler::reportBW();
     delete this;
     return Err::m_nOK;
 }
@@ -116,6 +117,8 @@ H264AVCEncoder::init(
     MemTracingFile::initCacheFiles(view);
 
     MemAccessHandler::setCurrView(view);
+
+    MemAccessHandler::initBW();
 
     return Err::m_nOK;
 }

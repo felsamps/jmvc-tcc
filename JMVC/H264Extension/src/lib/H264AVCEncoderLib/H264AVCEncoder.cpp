@@ -8,7 +8,6 @@
 #include "H264AVCCommonLib/FrameMng.h"
 #include "MemTracingFile.h"
 #include "H264AVCCommonLib/TraceFile.h"
-#include "MemAccessHandler.h"
 
 #include <math.h>
 #include <string>
